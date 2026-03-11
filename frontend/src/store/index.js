@@ -5,6 +5,7 @@ const store = createStore({
     token: localStorage.getItem('access_token') || null,
     user: JSON.parse(localStorage.getItem('user') || 'null'),
     profile: JSON.parse(localStorage.getItem('profile') || 'null'),
+    branches: JSON.parse(localStorage.getItem('branches') || '[]'),
     toasts: []
   },
 
@@ -64,14 +65,52 @@ const store = createStore({
       }, 4000)
     },
     
-    REMOVE_TOAST(state, id) {
-      state.toasts = state.toasts.filter(t => t.id !== id)
-    }
+    SET_BRANCHES(state, branches) {
+      state.branches = branches
+      localStorage.setItem('branches', JSON.stringify(branches))
+    },
   },
 
   actions: {
     logout({ commit }) {
       commit('CLEAR_AUTH')
+    },
+    
+    async fetchBranches({ commit }) {
+      try {
+        const response = await fetch('http://localhost:5000/api/drives/branches')
+        const data = await response.json()
+        commit('SET_BRANCHES', data.branches || [])
+      } catch (error) {
+        console.error('Failed to fetch branches:', error)
+        // Fallback to some default branches
+        commit('SET_BRANCHES', ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil'])
+      }
+    },
+    
+    async refreshUserData({ commit, state }) {
+      if (!state.token) return
+      
+      try {
+        // Fetch user profile based on role
+        let profileResponse
+        if (state.user.role === 'student') {
+          profileResponse = await fetch('http://localhost:5000/api/student/profile', {
+            headers: { 'Authorization': `Bearer ${state.token}` }
+          })
+        } else if (state.user.role === 'company') {
+          profileResponse = await fetch('http://localhost:5000/api/company/profile', {
+            headers: { 'Authorization': `Bearer ${state.token}` }
+          })
+        }
+        
+        if (profileResponse && profileResponse.ok) {
+          const profile = await profileResponse.json()
+          commit('SET_AUTH', { token: state.token, user: state.user, profile })
+        }
+      } catch (error) {
+        console.error('Failed to refresh user data:', error)
+      }
     }
   }
 })

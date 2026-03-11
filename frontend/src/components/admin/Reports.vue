@@ -203,8 +203,8 @@ export default {
           year: this.selectedYear
         })
         
-        this.reportData = response.data.report_data || {}
-        this.htmlReport = response.data.html_report
+        this.reportData = response.report_data || {}
+        this.htmlReport = response.html_report
       } catch (error) {
         console.error('Failed to generate report:', error)
       } finally {
@@ -215,7 +215,7 @@ export default {
     async fetchBranchStats() {
       try {
         const response = await adminAPI.getBranchStats()
-        this.branchStats = response.data.branches || []
+        this.branchStats = response.branches || []
       } catch (error) {
         console.error('Failed to fetch branch stats:', error)
       }

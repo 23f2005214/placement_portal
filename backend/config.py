@@ -79,6 +79,7 @@ class DevelopmentConfig(Config):
     """Development-specific configuration."""
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    CACHE_TYPE = 'redis'  # Use Redis for caching
 
 
 class ProductionConfig(Config):

@@ -40,18 +40,18 @@ def get_public_drives():
         
         # Base query: approved drives with deadline not passed
         query = PlacementDrive.query.join(CompanyProfile).filter(
-            PlacementDrive.status == 'approved',
-            PlacementDrive.application_deadline > datetime.utcnow(),
-            CompanyProfile.approval_status == 'approved'
+            PlacementDrive.status == 'approved',  # type: ignore
+            PlacementDrive.application_deadline > datetime.utcnow(),  # type: ignore
+            CompanyProfile.approval_status == 'approved'  # type: ignore
         )
         
         # Apply filters
         if search:
             query = query.filter(
                 or_(
-                    PlacementDrive.job_title.ilike(f'%{search}%'),
-                    CompanyProfile.company_name.ilike(f'%{search}%'),
-                    PlacementDrive.job_description.ilike(f'%{search}%')
+                    PlacementDrive.job_title.ilike(f'%{search}%'),  # type: ignore
+                    CompanyProfile.company_name.ilike(f'%{search}%'),  # type: ignore
+                    PlacementDrive.job_description.ilike(f'%{search}%')  # type: ignore
                 )
             )
         
@@ -67,7 +67,7 @@ def get_public_drives():
             )
         
         # Order by deadline (nearest first)
-        query = query.order_by(PlacementDrive.application_deadline.asc())
+        query = query.order_by(PlacementDrive.application_deadline.asc())  # type: ignore
         
         # Paginate
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -111,8 +111,8 @@ def get_drive_stats():
     try:
         total_drives = PlacementDrive.query.filter_by(status='approved').count()
         active_drives = PlacementDrive.query.filter(
-            PlacementDrive.status == 'approved',
-            PlacementDrive.application_deadline > datetime.utcnow()
+            PlacementDrive.status == 'approved',  # type: ignore
+            PlacementDrive.application_deadline > datetime.utcnow()  # type: ignore
         ).count()
         total_companies = CompanyProfile.query.filter_by(approval_status='approved').count()
         
@@ -121,7 +121,7 @@ def get_drive_stats():
             PlacementDrive.job_type,
             db.func.count(PlacementDrive.id)
         ).filter(
-            PlacementDrive.status == 'approved'
+            PlacementDrive.status == 'approved'  # type: ignore
         ).group_by(PlacementDrive.job_type).all()
         
         return jsonify({
@@ -145,11 +145,11 @@ def get_upcoming_drives():
         limit = request.args.get('limit', 5, type=int)
         
         drives = PlacementDrive.query.join(CompanyProfile).filter(
-            PlacementDrive.status == 'approved',
-            PlacementDrive.application_deadline > datetime.utcnow(),
-            CompanyProfile.approval_status == 'approved'
+            PlacementDrive.status == 'approved',  # type: ignore
+            PlacementDrive.application_deadline > datetime.utcnow(),  # type: ignore
+            CompanyProfile.approval_status == 'approved'  # type: ignore
         ).order_by(
-            PlacementDrive.application_deadline.asc()
+            PlacementDrive.application_deadline.asc()  # type: ignore
         ).limit(limit).all()
         
         return jsonify({
@@ -167,8 +167,8 @@ def get_available_branches():
     try:
         # Get all eligible branches from active drives
         drives = PlacementDrive.query.filter(
-            PlacementDrive.status == 'approved',
-            PlacementDrive.application_deadline > datetime.utcnow()
+            PlacementDrive.status == 'approved',  # type: ignore
+            PlacementDrive.application_deadline > datetime.utcnow()  # type: ignore
         ).all()
         
         branches = set()
@@ -178,6 +178,19 @@ def get_available_branches():
                     branch = branch.strip()
                     if branch.lower() != 'all':
                         branches.add(branch)
+        
+        # If no branches from drives, provide default branches
+        if not branches:
+            branches = {
+                'Computer Science',
+                'Information Technology', 
+                'Electronics and Communication',
+                'Mechanical Engineering',
+                'Civil Engineering',
+                'Electrical Engineering',
+                'Chemical Engineering',
+                'Biotechnology'
+            }
         
         return jsonify({
             'branches': sorted(list(branches))

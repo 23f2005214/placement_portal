@@ -43,11 +43,10 @@
                   </div>
                   <div class="col-6">
                     <select class="form-select" v-model="student.branch" required>
-                      <option value="">Branch *</option>
-                      <option>Computer Science</option>
-                      <option>Information Technology</option>
-                      <option>Electronics</option>
-                      <option>Mechanical</option>
+                      <option value="">Select Branch *</option>
+                      <option v-for="branch in branches" :key="branch" :value="branch">
+                        {{ branch }}
+                      </option>
                     </select>
                   </div>
                   <div class="col-6">
@@ -142,6 +141,12 @@ export default {
         company_name: '',
         industry: ''
       }
+    }
+  },
+  
+  computed: {
+    branches() {
+      return this.$store.state.branches
     }
   },
   

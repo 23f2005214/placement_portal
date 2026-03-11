@@ -534,8 +534,8 @@ export default {
     async fetchDrive() {
       try {
         const response = await companyAPI.getDrive(this.id)
-        this.drive = response.data.drive
-        this.applicationBreakdown = response.data.application_breakdown || this.applicationBreakdown
+        this.drive = response.drive
+        this.applicationBreakdown = response.application_breakdown || this.applicationBreakdown
       } catch (error) {
         console.error('Failed to fetch drive:', error)
       }
@@ -552,8 +552,8 @@ export default {
         }
         
         const response = await companyAPI.getDriveApplications(this.id, params)
-        this.applications = response.data.applications || []
-        this.pagination = response.data.pagination || this.pagination
+        this.applications = response.applications || []
+        this.pagination = response.pagination || this.pagination
         this.selectedApplications = []
       } catch (error) {
         console.error('Failed to fetch applications:', error)

@@ -45,8 +45,8 @@ def get_dashboard():
         approved_drives = company.placement_drives.filter_by(status='approved').count()
         pending_drives = company.placement_drives.filter_by(status='pending').count()
         active_drives = company.placement_drives.filter(
-            PlacementDrive.status == 'approved',
-            PlacementDrive.application_deadline > datetime.utcnow()
+            PlacementDrive.status == 'approved',  # type: ignore
+            PlacementDrive.application_deadline > datetime.utcnow()  # type: ignore
         ).count()
         
         # Get application statistics
@@ -66,7 +66,7 @@ def get_dashboard():
         
         # Get recent applications
         recent_applications = Application.query.join(PlacementDrive).filter(
-            PlacementDrive.company_id == company.id
+            PlacementDrive.company_id == company.id  # type: ignore
         ).order_by(Application.applied_at.desc()).limit(10).all()
         
         return jsonify({
@@ -451,10 +451,10 @@ def get_drive_applications(drive_id):
         if search:
             query = query.filter(
                 or_(
-                    StudentProfile.first_name.ilike(f'%{search}%'),
-                    StudentProfile.last_name.ilike(f'%{search}%'),
-                    User.email.ilike(f'%{search}%'),
-                    StudentProfile.roll_number.ilike(f'%{search}%')
+                    StudentProfile.first_name.ilike(f'%{search}%'),  # type: ignore
+                    StudentProfile.last_name.ilike(f'%{search}%'),  # type: ignore
+                    User.email.ilike(f'%{search}%'),  # type: ignore
+                    StudentProfile.roll_number.ilike(f'%{search}%')  # type: ignore
                 )
             )
         
@@ -517,7 +517,7 @@ def update_application_status(application_id):
         # Get application and verify it belongs to company's drive
         application = Application.query.join(PlacementDrive).filter(
             Application.id == application_id,
-            PlacementDrive.company_id == company.id
+            PlacementDrive.company_id == company.id  # type: ignore
         ).first_or_404()
         
         application.update_status(new_status, data.get('remarks'))
@@ -567,7 +567,7 @@ def schedule_interview(application_id):
         # Get application and verify
         application = Application.query.join(PlacementDrive).filter(
             Application.id == application_id,
-            PlacementDrive.company_id == company.id
+            PlacementDrive.company_id == company.id  # type: ignore
         ).first_or_404()
         
         application.schedule_interview(
@@ -610,7 +610,7 @@ def create_offer(application_id):
         # Get application and verify
         application = Application.query.join(PlacementDrive).filter(
             Application.id == application_id,
-            PlacementDrive.company_id == company.id
+            PlacementDrive.company_id == company.id  # type: ignore
         ).first_or_404()
         
         # Verify application is selected

@@ -351,8 +351,8 @@ export default {
         }
         
         const response = await adminAPI.getStudents(params)
-        this.students = response.data.students || []
-        this.pagination = response.data.pagination || this.pagination
+        this.students = response.students || []
+        this.pagination = response.pagination || this.pagination
       } catch (error) {
         console.error('Failed to fetch students:', error)
       } finally {
@@ -392,7 +392,7 @@ export default {
       
       try {
         const response = await adminAPI.getStudent(student.id)
-        this.studentStats = response.data.stats
+        this.studentStats = response.stats
       } catch (error) {
         console.error('Failed to fetch student details:', error)
       }

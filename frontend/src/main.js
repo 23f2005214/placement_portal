@@ -14,4 +14,7 @@ app.use(store)
 app.use(router)
 app.mount('#app')
 
+// Fetch branches on app load
+store.dispatch('fetchBranches')
+
 console.log('Vue app mounted successfully')

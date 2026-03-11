@@ -4,6 +4,7 @@ Creates and configures the Flask application with all extensions and routes.
 """
 
 import os
+import logging
 from flask import Flask, jsonify
 from flask_cors import CORS
 from config import config_by_name
@@ -27,6 +28,19 @@ def create_app(config_name=None):
     
     # Load configuration
     app.config.from_object(config_by_name[config_name])
+    
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    # Suppress verbose logging from werkzeug
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.WARNING)
+    
+    # Suppress SQLAlchemy logging for cleaner output
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
     
     # Initialize extensions
     db.init_app(app)
@@ -91,10 +105,24 @@ def create_app(config_name=None):
     # Health check endpoint
     @app.route('/api/health', methods=['GET'])
     def health_check():
-        return jsonify({
+        health_status = {
             'status': 'healthy',
-            'message': 'Placement Portal API is running'
-        }), 200
+            'message': 'Placement Portal API is running',
+            'cache': 'unknown'
+        }
+        
+        # Check Redis/Cache status
+        try:
+            cache.set('health_check', 'ok', timeout=10)
+            cache_value = cache.get('health_check')
+            if cache_value == 'ok':
+                health_status['cache'] = 'connected'
+            else:
+                health_status['cache'] = 'failed'
+        except Exception as e:
+            health_status['cache'] = f'error: {str(e)}'
+        
+        return jsonify(health_status), 200
     
     # Initialize database and create admin
     with app.app_context():
@@ -109,6 +137,15 @@ def create_app(config_name=None):
 
 # Application instance for running directly
 app = create_app()
+
+# Log startup information
+with app.app_context():
+    app_logger = logging.getLogger('placement_portal')
+    cache_type = app.config.get('CACHE_TYPE', 'unknown')
+    redis_url = app.config.get('REDIS_URL', 'N/A')
+    app_logger.info(f"Cache Type: {cache_type}")
+    app_logger.info(f"Redis URL: {redis_url}")
+    app_logger.info("Application initialized successfully")
 
 
 if __name__ == '__main__':

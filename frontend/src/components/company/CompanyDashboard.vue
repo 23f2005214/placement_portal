@@ -190,8 +190,18 @@ export default {
       this.loading = true
       try {
         const response = await companyAPI.getDashboard()
-        const data = response.data
+        // api.js already unwraps .data
+        const data = response
         
+        // if API returns company object, update store so name/approval status stay fresh
+        if (data.company) {
+          this.$store.commit('SET_AUTH', {
+            token: this.$store.state.token,
+            user: this.$store.state.user,
+            profile: data.company
+          })
+        }
+
         this.stats = data.statistics || {}
         this.recentDrives = data.recent_drives || []
         this.recentApplications = data.recent_applications || []

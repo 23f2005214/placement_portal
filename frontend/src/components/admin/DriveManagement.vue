@@ -343,8 +343,8 @@ export default {
         }
         
         const response = await adminAPI.getDrives(params)
-        this.drives = response.data.drives || []
-        this.pagination = response.data.pagination || this.pagination
+        this.drives = response.drives || []
+        this.pagination = response.pagination || this.pagination
       } catch (error) {
         console.error('Failed to fetch drives:', error)
       } finally {

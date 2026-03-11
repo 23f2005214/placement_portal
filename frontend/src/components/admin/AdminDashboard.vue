@@ -239,8 +239,7 @@ export default {
     async fetchDashboard() {
       this.loading = true
       try {
-        const response = await adminAPI.getDashboard()
-        const data = response.data
+        const data = await adminAPI.getDashboard()
         
         this.stats = data.statistics || {}
         this.weeklyStats = data.weekly || {}

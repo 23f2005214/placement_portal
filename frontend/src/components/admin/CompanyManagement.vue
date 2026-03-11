@@ -417,8 +417,8 @@ export default {
         }
         
         const response = await adminAPI.getCompanies(params)
-        this.companies = response.data.companies || []
-        this.pagination = response.data.pagination || this.pagination
+        this.companies = response.companies || []
+        this.pagination = response.pagination || this.pagination
       } catch (error) {
         console.error('Failed to fetch companies:', error)
       } finally {
@@ -457,7 +457,7 @@ export default {
       
       try {
         const response = await adminAPI.getCompany(company.id)
-        this.companyStats = response.data.stats
+        this.companyStats = response.stats
       } catch (error) {
         console.error('Failed to fetch company details:', error)
       }
