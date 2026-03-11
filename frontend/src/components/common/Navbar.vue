@@ -77,7 +77,7 @@
         <div class="dropdown">
           <button 
             type="button"
-            class="btn btn-link text-dark d-flex align-items-center p-0"
+            class="btn btn-link text-dark d-flex align-items-center p-0 dropdown-toggle"
             id="userMenuDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
@@ -186,5 +186,26 @@ export default {
 
 .navbar {
   z-index: 1030;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  z-index: 1060 !important;
+  min-width: 200px;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
 }
 </style>
