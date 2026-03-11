@@ -125,7 +125,8 @@ export default {
       searchQuery: '',
       notifications: [],
       showUserMenu: false,
-      showNotifications: false
+      showNotifications: false,
+      documentClickHandler: null
     }
   },
   
@@ -152,11 +153,15 @@ export default {
   },
   
   mounted() {
-    document.addEventListener('click', this.closeDropdowns)
+    // Keep a stable function reference for add/removeEventListener
+    this.documentClickHandler = (event) => this.closeDropdowns(event)
+    document.addEventListener('click', this.documentClickHandler)
   },
   
   beforeUnmount() {
-    document.removeEventListener('click', this.closeDropdowns)
+    if (this.documentClickHandler) {
+      document.removeEventListener('click', this.documentClickHandler)
+    }
   },
 
   methods: {
@@ -216,6 +221,7 @@ export default {
 }
 
 .dropdown-menu {
+  display: none;
   position: absolute;
   top: 100%;
   right: 0;

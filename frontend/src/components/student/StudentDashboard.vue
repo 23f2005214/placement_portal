@@ -270,7 +270,8 @@ export default {
     async fetchEligibleDrives() {
       try {
         const response = await studentAPI.getDrives({ per_page: 6 })
-        this.eligibleDrives = (response.drives || []).filter(d => d.is_eligible && !d.has_applied)
+        const drives = response?.drives || response?.data?.drives || []
+        this.eligibleDrives = drives.filter(d => d.is_eligible && !d.has_applied)
       } catch (error) {
         console.error('Failed to fetch drives:', error)
       }
