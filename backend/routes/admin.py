@@ -128,13 +128,13 @@ def get_companies():
 
         # Filter by status
         if status:
-            query = query.filter(CompanyProfile.approval_status == status)
+            query = query.filter(CompanyProfile.approval_status == status)  # type: ignore
 
         # Search
         if search:
-            query = query.filter(
+            query = query.filter(  # type: ignore
                 or_(
-                    CompanyProfile.company_name.ilike(f'%{search}%'),
+                    CompanyProfile.company_name.ilike(f'%{search}%'),  # type: ignore
                     User.email.ilike(f'%{search}%'),
                     CompanyProfile.industry.ilike(f'%{search}%')
                 )
@@ -339,10 +339,10 @@ def get_students():
 
         # Filters
         if branch:
-            query = query.filter(StudentProfile.branch == branch)
+            query = query.filter(StudentProfile.branch == branch)  # type: ignore
 
         if graduation_year:
-            query = query.filter(StudentProfile.graduation_year == graduation_year)
+            query = query.filter(StudentProfile.graduation_year == graduation_year)  # type: ignore
 
         if is_placed is not None:
             is_placed_bool = is_placed.lower() == 'true'
@@ -350,9 +350,9 @@ def get_students():
 
         # Search
         if search:
-            query = query.filter(
+            query = query.filter(  # type: ignore
                 or_(
-                    StudentProfile.first_name.ilike(f'%{search}%'),
+                    StudentProfile.first_name.ilike(f'%{search}%'),  # type: ignore
                     StudentProfile.last_name.ilike(f'%{search}%'),
                     User.email.ilike(f'%{search}%'),
                     StudentProfile.roll_number.ilike(f'%{search}%')
@@ -398,7 +398,7 @@ def get_student(student_id):
         selected = student.applications.filter_by(status='selected').count()
         rejected = student.applications.filter_by(status='rejected').count()
         pending = student.applications.filter(
-            Application.status.in_(['applied', 'under_review', 'shortlisted', 'interview_scheduled'])
+            Application.status.in_(['applied', 'under_review', 'shortlisted', 'interview_scheduled'])  # type: ignore
         ).count()
 
         # Get recent applications
@@ -497,17 +497,17 @@ def get_all_drives():
 
         # Filters
         if status:
-            query = query.filter(PlacementDrive.status == status)
+            query = query.filter(PlacementDrive.status == status)  # type: ignore
 
         if company_id:
-            query = query.filter(PlacementDrive.company_id == company_id)
+            query = query.filter(PlacementDrive.company_id == company_id)  # type: ignore
 
         # Search
         if search:
-            query = query.filter(
+            query = query.filter(  # type: ignore
                 or_(
-                    PlacementDrive.job_title.ilike(f'%{search}%'),
-                    CompanyProfile.company_name.ilike(f'%{search}%')
+                    PlacementDrive.job_title.ilike(f'%{search}%'),  # type: ignore
+                    CompanyProfile.company_name.ilike(f'%{search}%')  # type: ignore
                 )
             )
 
@@ -613,13 +613,13 @@ def get_all_applications():
 
         # Filters
         if status:
-            query = query.filter(Application.status == status)
+            query = query.filter(Application.status == status)  # type: ignore
 
         if drive_id:
-            query = query.filter(Application.drive_id == drive_id)
+            query = query.filter(Application.drive_id == drive_id)  # type: ignore
 
         if student_id:
-            query = query.filter(Application.student_id == student_id)
+            query = query.filter(Application.student_id == student_id)  # type: ignore
 
         # Order by applied_at desc
         query = query.order_by(Application.applied_at.desc())
@@ -706,7 +706,7 @@ def get_monthly_report():
 
         # Get top recruiting companies
         top_companies = db.session.query(
-            CompanyProfile.company_name,
+            CompanyProfile.company_name,  # type: ignore
             func.count(PlacementDrive.id).label('drive_count'),
             func.count(Application.id).label('app_count')
         ).join(PlacementDrive).outerjoin(Application).filter(
@@ -750,10 +750,10 @@ def get_branch_stats():
     """Get statistics by branch."""
     try:
         branch_stats = db.session.query(
-            StudentProfile.branch,
+            StudentProfile.branch,  # type: ignore
             func.count(StudentProfile.id).label('total_students'),
             func.sum(StudentProfile.is_placed.cast(db.Integer)).label('placed_students')
-        ).group_by(StudentProfile.branch).all()
+        ).group_by(StudentProfile.branch).all()  # type: ignore
 
         return jsonify({
             'branches': [
