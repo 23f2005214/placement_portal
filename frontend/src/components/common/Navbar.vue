@@ -36,8 +36,11 @@
         <!-- Notifications -->
         <div class="dropdown me-3">
           <button 
+            type="button"
             class="btn btn-link text-dark position-relative p-1"
             data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-haspopup="true"
           >
             <i class="bi bi-bell fs-5"></i>
             <span 
@@ -73,8 +76,11 @@
         <!-- User Menu -->
         <div class="dropdown">
           <button 
+            type="button"
             class="btn btn-link text-dark d-flex align-items-center p-0"
             data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-haspopup="true"
           >
             <div class="avatar bg-primary text-white rounded-circle me-2">
               {{ userInitials }}
@@ -154,8 +160,8 @@ export default {
       console.log('Show settings')
     },
     
-    handleLogout() {
-      this.$store.dispatch('logout')
+    async handleLogout() {
+      await this.$store.dispatch('logout')
       this.$router.push('/login')
     },
     

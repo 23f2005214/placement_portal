@@ -39,27 +39,44 @@ api.interceptors.response.use(
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard').then(r => r.data),
   getCompanies: (params) => api.get('/admin/companies', { params }).then(r => r.data),
+  getCompany: (id) => api.get(`/admin/companies/${id}`).then(r => r.data),
   approveCompany: (id) => api.post(`/admin/companies/${id}/approve`).then(r => r.data),
   rejectCompany: (id, reason) => api.post(`/admin/companies/${id}/reject`, { reason }).then(r => r.data),
+  toggleCompanyBlacklist: (id) => api.post(`/admin/companies/${id}/blacklist`).then(r => r.data),
+  toggleCompanyStatus: (id) => api.post(`/admin/companies/${id}/deactivate`).then(r => r.data),
   getStudents: (params) => api.get('/admin/students', { params }).then(r => r.data),
+  getStudent: (id) => api.get(`/admin/students/${id}`).then(r => r.data),
+  toggleStudentBlacklist: (id) => api.post(`/admin/students/${id}/blacklist`).then(r => r.data),
   getDrives: (params) => api.get('/admin/drives', { params }).then(r => r.data),
   approveDrive: (id) => api.post(`/admin/drives/${id}/approve`).then(r => r.data),
-  rejectDrive: (id, remarks) => api.post(`/admin/drives/${id}/reject`, { remarks }).then(r => r.data)
+  rejectDrive: (id, remarks) => api.post(`/admin/drives/${id}/reject`, { remarks }).then(r => r.data),
+  getMonthlyReport: (params) => api.get('/admin/reports/monthly', { params }).then(r => r.data),
+  getBranchStats: () => api.get('/admin/stats/branches').then(r => r.data)
 }
 
 // Company API
 export const companyAPI = {
   getDashboard: () => api.get('/company/dashboard').then(r => r.data),
   getProfile: () => api.get('/company/profile').then(r => r.data),
-  updateProfile: (data) => api.put('/company/profile', data).then(r => r.data),
+  getDrive: (id) => api.get(`/company/drives/${id}`).then(r => r.data),
+  createDrive: (data) => api.post('/company/drives', data).then(r => r.data),
+  closeDrive: (id) => api.post(`/company/drives/${id}/close`).then(r => r.data),
+  getDriveApplications: (id, params) => api.get(`/company/drives/${id}/applications`, { params }).then(r => r.data),
+  updateApplicationStatus: (id, data) => api.put(`/company/applications/${id}/status`, data).then(r => r.data),
+  scheduleInterview: (id, data) => api.post(`/company/applications/${id}/schedule-interview`e', data).then(r => r.data),
   getDrives: (params) => api.get('/company/drives', { params }).then(r => r.data),
   createDrive: (data) => api.post('/company/drives', data).then(r => r.data)
 }
 
-// Student API
-export const studentAPI = {
-  getDashboard: () => api.get('/student/dashboard').then(r => r.data),
-  getProfile: () => api.get('/student/profile').then(r => r.data),
+// Student: (id) => api.get(`/student/drives/${id}`).then(r => r.data),
+  getDrives: (params) => api.get('/student/drives', { params }).then(r => r.data),
+  applyToDrive: (id, data) => api.post(`/student/drives/${id}/apply`, data).then(r => r.data),
+  getApplications: (params) => api.get('/student/applications', { params }).then(r => r.data),
+  withdrawApplication: (id) => api.post(`/student/applications/${id}/withdraw`).then(r => r.data),
+  respondToOffer: (id, data) => api.post(`/student/applications/${id}/respond-offer`, data).then(r => r.data),
+  getPlacementHistory: () => api.get('/student/placement-history').then(r => r.data),
+  exportApplications: () => api.post('/student/export-applications').then(r => r.data),
+  checkExportStatus: (taskId) => api.get(`/student/export-applications/${taskId}/status`> r.data),
   updateProfile: (data) => api.put('/student/profile', data).then(r => r.data),
   getDrives: (params) => api.get('/student/drives', { params }).then(r => r.data),
   applyToDrive: (id, letter) => api.post(`/student/drives/${id}/apply`, { cover_letter: letter }).then(r => r.data),

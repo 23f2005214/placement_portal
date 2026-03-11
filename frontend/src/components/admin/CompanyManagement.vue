@@ -493,9 +493,7 @@ export default {
     async confirmReject() {
       this.processing = true
       try {
-        await adminAPI.rejectCompany(this.selectedCompany.id, {
-          reason: this.rejectReason
-        })
+        await adminAPI.rejectCompany(this.selectedCompany.id, this.rejectReason)
         this.rejectModal.hide()
         this.$store.dispatch('showNotification', {
           type: 'success',
