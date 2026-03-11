@@ -45,7 +45,9 @@ class CompanyProfile(db.Model):
     # Logo
     logo_url = db.Column(db.String(500), nullable=True)
     
-    # Approval status: 'pending', 'approved', 'rejected'
+    # Approval
+    is_approved = db.Column(db.Boolean, default=False)
+    # Text status for compatibility: 'pending', 'approved', 'rejected'
     approval_status = db.Column(db.String(20), default='pending')
     approval_date = db.Column(db.DateTime, nullable=True)
     rejection_reason = db.Column(db.Text, nullable=True)
@@ -74,17 +76,17 @@ class CompanyProfile(db.Model):
                 setattr(self, key, value)
     
     def approve(self):
-        """Approve the company registration."""
+        """Approve the company registration (no commit)."""
+        self.is_approved = True
         self.approval_status = 'approved'
         self.approval_date = datetime.utcnow()
         self.rejection_reason = None
-        db.session.commit()
     
     def reject(self, reason=None):
-        """Reject the company registration with optional reason."""
+        """Reject the company registration with optional reason (no commit)."""
+        self.is_approved = False
         self.approval_status = 'rejected'
         self.rejection_reason = reason
-        db.session.commit()
     
     def to_dict(self):
         """Convert company profile to dictionary."""
@@ -105,6 +107,7 @@ class CompanyProfile(db.Model):
             'company_size': self.company_size,
             'company_type': self.company_type,
             'logo_url': self.logo_url,
+            'is_approved': self.is_approved,
             'approval_status': self.approval_status,
             'approval_date': self.approval_date.isoformat() if self.approval_date else None,
             'rejection_reason': self.rejection_reason,

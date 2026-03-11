@@ -14,10 +14,18 @@ const store = createStore({
     userRole: state => state.user?.role || null,
     userName: state => {
       if (state.user?.role === 'admin') return 'Admin'
-      if (state.profile?.company_name) return state.profile.company_name
-      if (state.profile?.first_name) return state.profile.first_name
+      const profile = state.profile
+      if (profile?.company_name) return profile.company_name
+      if (profile?.first_name) return profile.first_name
       return state.user?.email || 'User'
-    }
+    },
+    companyApproved: state => {
+      if (state.user?.role !== 'company') return false
+      const profile = state.profile
+      if (!profile) return false
+      if (profile.is_approved === true) return true
+      return profile.approval_status === 'approved'
+    },
   },
 
   mutations: {
@@ -105,7 +113,8 @@ const store = createStore({
         }
         
         if (profileResponse && profileResponse.ok) {
-          const profile = await profileResponse.json()
+          const raw = await profileResponse.json()
+          const profile = raw.profile || raw.company || raw
           commit('SET_AUTH', { token: state.token, user: state.user, profile })
         }
       } catch (error) {

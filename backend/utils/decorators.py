@@ -90,7 +90,12 @@ def approved_company_required(fn):
         if not company_profile:
             return jsonify({'error': 'Company profile not found'}), 404
         
-        if company_profile.approval_status != 'approved':
+        # Prefer boolean flag when available, fall back to status text
+        is_approved = getattr(company_profile, 'is_approved', None)
+        if is_approved is None:
+            is_approved = company_profile.approval_status == 'approved'
+        
+        if not is_approved:
             return jsonify({
                 'error': 'Company not approved',
                 'message': 'Your company registration is pending admin approval',

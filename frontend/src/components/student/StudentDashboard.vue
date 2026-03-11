@@ -255,8 +255,7 @@ export default {
     async fetchDashboard() {
       this.loading = true
       try {
-        const response = await studentAPI.getDashboard()
-        const data = response.data
+        const data = await studentAPI.getDashboard()
         
         this.stats = data.statistics || {}
         this.upcomingInterviews = data.upcoming_interviews || []
@@ -271,7 +270,7 @@ export default {
     async fetchEligibleDrives() {
       try {
         const response = await studentAPI.getDrives({ per_page: 6 })
-        this.eligibleDrives = (response.data.drives || []).filter(d => d.is_eligible && !d.has_applied)
+        this.eligibleDrives = (response.drives || []).filter(d => d.is_eligible && !d.has_applied)
       } catch (error) {
         console.error('Failed to fetch drives:', error)
       }

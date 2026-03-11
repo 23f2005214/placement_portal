@@ -34,9 +34,9 @@ def get_dashboard():
         Dashboard statistics including counts and recent activities
     """
     try:
-        # Get counts
-        total_students = StudentProfile.query.count()
-        total_companies = CompanyProfile.query.count()
+        # Get counts (use User roles to be robust even if profiles missing)
+        total_students = User.query.filter_by(role='student').count()
+        total_companies = User.query.filter_by(role='company').count()
         total_drives = PlacementDrive.query.count()
         total_applications = Application.query.count()
 
@@ -206,7 +206,7 @@ def approve_company(company_id):
     try:
         company = CompanyProfile.query.get_or_404(company_id)
 
-        if company.approval_status == 'approved':
+        if company.approval_status == 'approved' or getattr(company, 'is_approved', False):
             return jsonify({'error': 'Company is already approved'}), 400
 
         company.approve()

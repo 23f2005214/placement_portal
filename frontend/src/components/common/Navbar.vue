@@ -37,9 +37,9 @@
         <div class="dropdown me-3">
           <button 
             type="button"
-            class="btn btn-link text-dark position-relative p-1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            class="btn btn-link text-dark position-relative p-1 dropdown-toggle"
+            @click="showNotifications = !showNotifications"
+            :aria-expanded="showNotifications"
             aria-haspopup="true"
           >
             <i class="bi bi-bell fs-5"></i>
@@ -50,7 +50,11 @@
               {{ notifications.length }}
             </span>
           </button>
-          <div class="dropdown-menu dropdown-menu-end shadow" style="min-width: 300px;">
+          <div 
+            class="dropdown-menu dropdown-menu-end shadow"
+            style="min-width: 300px;"
+            :class="{ show: showNotifications }"
+          >
             <h6 class="dropdown-header">Notifications</h6>
             <div v-if="notifications.length === 0" class="px-3 py-2 text-muted small">
               No new notifications
@@ -78,9 +82,8 @@
           <button 
             type="button"
             class="btn btn-link text-dark d-flex align-items-center p-0 dropdown-toggle"
-            id="userMenuDropdown"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            @click="showUserMenu = !showUserMenu"
+            :aria-expanded="showUserMenu"
             aria-haspopup="true"
           >
             <div class="avatar bg-primary text-white rounded-circle me-2">
@@ -92,8 +95,11 @@
             </div>
             <i class="bi bi-chevron-down small"></i>
           </button>
-          <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenuDropdown">
-            <router-link class="dropdown-item" :to="profileRoute">
+          <div 
+            class="dropdown-menu dropdown-menu-end shadow"
+            :class="{ show: showUserMenu }"
+          >
+            <router-link class="dropdown-item" :to="profileRoute" @click="showUserMenu = false">
               <i class="bi bi-person me-2"></i> Profile
             </router-link>
             <a class="dropdown-item" href="#" @click.prevent="showSettings">
@@ -117,7 +123,9 @@ export default {
   data() {
     return {
       searchQuery: '',
-      notifications: []
+      notifications: [],
+      showUserMenu: false,
+      showNotifications: false
     }
   },
   
@@ -143,6 +151,14 @@ export default {
     }
   },
   
+  mounted() {
+    document.addEventListener('click', this.closeDropdowns)
+  },
+  
+  beforeUnmount() {
+    document.removeEventListener('click', this.closeDropdowns)
+  },
+
   methods: {
     handleSearch() {
       if (this.searchQuery.trim()) {
@@ -168,6 +184,13 @@ export default {
         info: 'bi bi-info-circle text-info'
       }
       return icons[type] || icons.info
+    },
+    
+    closeDropdowns(event) {
+      if (!this.$el.contains(event.target)) {
+        this.showUserMenu = false
+        this.showNotifications = false
+      }
     }
   }
 }
@@ -193,8 +216,18 @@ export default {
 }
 
 .dropdown-menu {
-  z-index: 1060 !important;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1100 !important;
   min-width: 200px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.375rem;
+}
+
+.dropdown-menu.show {
+  display: block;
 }
 
 .dropdown-toggle::after {
@@ -203,9 +236,41 @@ export default {
 
 .dropdown-item {
   cursor: pointer;
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  clear: both;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  text-decoration: none;
 }
 
 .dropdown-item:hover {
+  color: #1e40af;
   background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+  color: #dc2626 !important;
+  background-color: #fee2e2;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dropdown-header {
+  display: block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  white-space: nowrap;
 }
 </style>
