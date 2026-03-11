@@ -78,6 +78,7 @@
           <button 
             type="button"
             class="btn btn-link text-dark d-flex align-items-center p-0"
+            id="userMenuDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             aria-haspopup="true"
@@ -91,24 +92,18 @@
             </div>
             <i class="bi bi-chevron-down small"></i>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <li>
-              <router-link class="dropdown-item" :to="profileRoute">
-                <i class="bi bi-person me-2"></i> Profile
-              </router-link>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#" @click.prevent="showSettings">
-                <i class="bi bi-gear me-2"></i> Settings
-              </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item text-danger" href="#" @click.prevent="handleLogout">
-                <i class="bi bi-box-arrow-right me-2"></i> Logout
-              </a>
-            </li>
-          </ul>
+          <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenuDropdown">
+            <router-link class="dropdown-item" :to="profileRoute">
+              <i class="bi bi-person me-2"></i> Profile
+            </router-link>
+            <a class="dropdown-item" href="#" @click.prevent="showSettings">
+              <i class="bi bi-gear me-2"></i> Settings
+            </a>
+            <hr class="dropdown-divider">
+            <a class="dropdown-item text-danger" href="#" @click.prevent="handleLogout">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+          </div>
         </div>
       </div>
     </div>
